@@ -7,7 +7,7 @@ import (
 )
 
 // LEN 循环次数控制
-const LEN =2
+const LEN = 2
 
 type myLock struct {
 	sync.Mutex
@@ -21,14 +21,13 @@ var (
 
 // 状态设计
 var (
-	firstSuccess = [2]bool{true,false}
-	secondSuccess = [2]bool{true,true}
+	firstSuccess  = [2]bool{true, false}
+	secondSuccess = [2]bool{true, true}
 )
 
 func first(i int) {
 	status[i] = firstSuccess
 }
-
 
 func second(i int) {
 	for {
@@ -57,20 +56,20 @@ func three(i int) {
 	}
 }
 
-
 var control chan int
-var wg   sync.WaitGroup
+var wg sync.WaitGroup
+
 func PrintfHelloWorld(i int) {
 	defer wg.Done()
-	fmt.Printf("goroutine:%d,input hello world!\n",i)
-	time.Sleep(1*time.Second)
+	fmt.Printf("goroutine:%d,input hello world!\n", i)
+	time.Sleep(1 * time.Second)
 	<-control
 }
 
 func test4() {
-	control = make(chan int,2)
-	for i:=0;i<10;i++{
-		control <-i
+	control = make(chan int, 2)
+	for i := 0; i < 10; i++ {
+		control <- i
 		wg.Add(1)
 		go PrintfHelloWorld(i)
 	}
@@ -79,11 +78,11 @@ func test4() {
 	fmt.Println("关闭信道")
 	close(control)
 
-	exit:=make(chan bool)
+	exit := make(chan bool)
 	//wg.Add(1)
 	go func() {
 
-	for {
+		for {
 			select {
 			case <-exit:
 				fmt.Println("收到退出信号")
@@ -98,7 +97,7 @@ func test4() {
 
 	//传递false也是可以的，这里就代表说只要收到信道的传值就是直接可以的。
 	//time.Sleep(1*time.Millisecond)
-	exit<-false
+	exit <- false
 	//wg.Wait()
 	//下面这种方式还是不能够实现正确关闭，还是会丢掉边界的执行，并不安全。
 	//
@@ -109,38 +108,15 @@ func test4() {
 	//	}
 	//}
 
-
-
-	//这种使用可以先满足题目要求，但是并不能够使用
+	//这种使用可以先满足题目要求
 	//time.Sleep(1*time.Second)
 }
 
-
-
-
 func main() {
-
-		for i := 0; i < LEN; i++ {
-			go first(i)
-			go second(i)
-			go three(i)
-		}
-		time.Sleep(1*time.Second)
-
-
-	 //二维切片的定义
-	 //coding :=[LEN][2]bool{}
-	 //coding[0]=[2]bool{false,false}
-	 //coding[1]=[2]bool{true,true}
-	 //
-
-	//切片长度是一个变量的时候，使用make或者new来初始化变量。
-	//切片直接使用常量的话 可以直接进行初始化
-	 //m,_:=3,4
-	 //array:=make([][]bool,m)
-	 //for i:=range array {
-	 //	array[i] =[]bool{true,false,false,false}
-	 //}
-	 //fmt.Printf("%+v",array)
+	for i := 0; i < LEN; i++ {
+		go first(i)
+		go second(i)
+		go three(i)
+	}
+	time.Sleep(1 * time.Second)
 }
-
