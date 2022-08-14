@@ -66,7 +66,8 @@ func PrintfHelloWorld(i int) {
 	<-control
 }
 
-func test4() {
+//test 另外一种写法
+func test() {
 	control = make(chan int, 2)
 	for i := 0; i < 10; i++ {
 		control <- i
